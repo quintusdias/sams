@@ -1,0 +1,64 @@
+.tabs {
+	margin: 0;
+	padding: 0;	
+	zoom : 1;
+}
+.tabs li {
+	float: left;
+	list-style: none;
+	padding: 0;
+	margin: 0;
+}
+.tabs a {
+	display: block;
+	text-decoration: none;
+	padding: 3px 5px;
+	background-color: rgb(110,138,195);
+	margin-right: 10px;
+	border: 1px solid rgb(153,153,153);
+	margin-bottom: -1px;
+}
+.tabs .active {
+	border-bottom: 1px solid white;
+	background-color: white;
+	color: rgb(51,72,115);
+	position: relative;
+}
+
+.panelContainer {
+	clear: both;
+	margin-bottom: 25px;	
+	border: 1px solid rgb(153,153,153);	
+	background-color: white;
+	padding: 10px;
+}
+
+.panel h2 {
+	color: rgb(57,78,121);
+	text-shadow: none;		
+}
+.panel p {
+	color: black;	
+}
+/*
+ * Collapse the table elements, otherwise it consumes too much of the browser 
+ * real estate.
+ *
+ * The TH elements and the INPUT elements seem to be the most crucial parts.
+ * */
+table.mortality {
+    border-collapse:  collapse;
+}
+table.mortality > tbody > tr > th {
+    width:  100px;
+}
+table.mortality > tbody > tr > td > input {
+    width:  100px;
+}
+
+div.centre {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 10em;
+}

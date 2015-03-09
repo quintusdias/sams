@@ -1,0 +1,4 @@
+Django==1.7
+matplotlib==1.4.3
+pandas==0.15.2
+seaborn==0.5.1

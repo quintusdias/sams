@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="utf-8">
+<title>Sams Model for scallops</title>
+
+<link rel="stylesheet" href="//code.jquery.com/ui/1.11.3/themes/smoothness/jquery-ui.css">
+<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+<script src="//code.jquery.com/ui/1.11.3/jquery-ui.js"></script>
+
+<link href="/static/css/sams.css" rel="stylesheet" type="text/css">
+
+<script>
+    $(function() {
+        $( "#open_area_f_mortality_slider_id" ).slider({
+            min: 0,
+            max: 100,
+            value: 48,
+            change: function( event, ui ) {
+                $( "#open_area_f_mortality_display_id" ).val( ui.value/100.0 );
+            },
+        });
+    });
+</script>
+
+<script>
+// append_mortality_subregion_header
+//
+// Append a header row that displays sub region names.
+//
+// Parameters
+// ----------
+// table : DOM element
+//     <table/> element that displays the model configuration
+// sub_region_names : array of strings
+//     Each item is a sub region name to be displayed in a <th> element.
+function append_mortality_subregion_header($table, sub_region_names) {
+
+    // Add the sub region names in a header line
+    var $tr = $("<tr>", {class: "sub_region_names"});
+
+    // Add a blank header in the first location, as it sits over the year
+    // labels.
+    $tr.append("<th></th>");
+
+    for (var j = 0; j < sub_region_names.length; ++j) {
+        var $th = $("<th>" + sub_region_names[j] + "</th>",
+                    {'class': 'sams_header'});
+        $tr.append($th);
+    }
+    $table.append($tr);
+
+}
+
+// toggle_sub_area_text_checkboxes
+//
+// Event handler for the sub area checkboxes.  If clicked, then all of the 
+// text boxes for the current sub area need to be either activated or
+// deactivated.
+function toggle_sub_area_text_boxes() {
+
+    var sub_area = $(this).attr('sub_area');
+
+    if ( $(this).is(':checked') ) {
+        $("input[sub_area_text='" + sub_area + "']").attr('disabled', false);
+    } else {
+        $("input[sub_area_text='" + sub_area + "']").attr('disabled', true);
+    }
+
+}
+
+
+// append_mortality_subregion_checkboxes
+//
+// Append a row with checkboxes.  The user can turn them on or off.
+//
+// Parameters
+// ----------
+// table : DOM element
+//     <table/> element that displays the model configuration
+// config : object literal
+//     Specifies model region configuration.  
+function append_mortality_subregion_checkboxes($table, config) {
+
+    // Add the sub region names in a header line
+    var $tr = $("<tr>", {class: "sub_region_checkboxes"});
+    $tr.addClass(config.area);
+
+    // Add a blank element in the first location, as it sits over the year
+    // labels.
+    $tr.append("<td></td>");
+
+    for (var j = 0; j < config.sub_area_names.length; ++j) {
+        var $td = $("<td></td>");
+
+        var the_id = config.sub_area_names[j].toLowerCase();
+        var the_id = the_id.replace(" ", "_") + '_checkbox_id';
+
+        var the_name = config.area + '_sub_area_active_' + j;
+
+        var $ipt = $("<input></input>", {id: the_id,
+                                         'type': 'checkbox',
+                                         'name': the_name,
+                                         'class': 'sub_area_checkbox',
+                                         'sub_area': config.sub_area_names[j]});
+        if ( config.active_sub_areas[j] ) {
+            $ipt.prop('checked', true);
+        }
+
+        $td.append($ipt);
+
+        $tr.append($td);
+    }
+    $table.append($tr);
+
+}
+
+
+// validate_sub_area_mortality
+//
+//     If a sub area mortality box value is not a number or if it is not
+//     between 0.0 and 1.0, then return it to a blank value.
+function validate_sub_area_mortality() {
+    var mortality = parseFloat($(this).val());
+    if ( isNaN(mortality) ) {
+        $(this).val('');
+    } else if ( mortality < 0.0 ) {
+        $(this).val('');
+    } else if ( mortality > 1.0 ) {
+        $(this).val('');
+    }
+}
+
+// append_mortality_table_rows
+//
+//    Append rows <tr> elements to the table displaying the region model
+//    configuration.
+//
+// Parameters
+// ----------
+// config : object literal
+//     Contains the region model configuration.
+//     area : string
+//         Either 'ma' for Mid Atlantic or 'gb' for Georges Bank
+//     sub_area_names : array
+//         List of sub region names.  For example,
+//         ['CA1-NA','CA1-Acc','CA2-NA','CA2-Acc']
+//     active_sub_areas : array
+//         Indices specifying which sub areas are active
+//     mortality : 2D floating point array
+//         Mortality rates.  If an element is negative, it is ignored.
+//     start_year : integer
+//         The year that the model is to start.
+// table : DOM element
+//     <table/> element that displays the model configuration
+function append_mortality_table_rows(config, $table) {
+
+    var num_sub_areas = config.mortality.length;
+    var num_years = config.mortality[0].length;
+
+    // Add the rows, each of which corresponds to a model year.
+    for (var i = 0; i < num_years; ++i) {
+        var $tr = $("<tr>", {class: "grid_row"});
+
+        // Add a header for the year.
+        current_year = config.start_year + i;
+        var $th = $("<th>" + current_year + "</th>");
+        $tr.append($th);
+
+        // Add elements for each sub area.
+        for (var j = 0; j < num_sub_areas; ++j) {
+            var $td = $("<td></td>");
+            var the_name = config.area + "_row_" + i + "_col_" + j;
+            var $ipt = $("<input></input>", {
+                    'class':  'sub_area_mortality_text',
+                    'type': 'text',
+                    'name': the_name,
+                    'sub_area_text': config.sub_area_names[j]});
+            if ( config.mortality[j][i] >= 0.0 ) {
+                $ipt.val(config.mortality[j][i]);
+            }
+
+            // Make the input text area disabled if the configuration says to
+            // do so.
+            if ( config.active_sub_areas[j] ) {
+                $ipt.attr('disabled', false);
+            } else {
+                $ipt.attr('disabled', true);
+            }
+            $td.append($ipt);
+            $tr.append($td);
+        }
+        $table.append($tr);
+    }
+
+    // If the user changed the value in a mortality text box, then we have
+    // to validate if it is a number between 0.0 and 1.0.
+    $('.sub_area_mortality_text').blur(validate_sub_area_mortality);
+
+}
+
+// generate_form_elements
+//
+//    Generate a table containing the form elements for a model area.
+//
+// Parameters
+// ----------
+// config : object literal
+//     Contains the region model configuration.
+//     area : string
+//         Either 'ma' for Mid Atlantic or 'gb' for Georges Bank
+//     sub_area_names : array
+//         List of sub region names.  For example,
+//         ['CA1-NA','CA1-Acc','CA2-NA','CA2-Acc']
+//     active_sub_areas : array
+//         Indices that specify which sub areas are active.
+//     mortality : 2D floating point array
+//         Mortality rates.  If an element is negative, it is ignored.
+//     start_year : integer
+//         The year that the model is to start.
+// div : DOM element
+//     DIV element that serves as a parent to the generated table .
+function generate_form_elements(config, div) {
+
+    // Mortality table
+    var $table = $("<table>", {'class': 'mortality'});
+    append_mortality_subregion_header($table, config.sub_area_names);
+    append_mortality_subregion_checkboxes($table, config);
+    append_mortality_table_rows(config, $table);
+    div.append($table);
+
+    var num_years = config.mortality[0].length;
+
+    // Need to communicate the sub region names to the model.
+    // Do this in a hidden field.
+    var hidden_name = config.area + '_sub_region_names';
+    var $hidden_input =  $("<input></input>", {'type': 'hidden',
+                                               'name': hidden_name,
+                                               'value' : config.sub_area_names});
+    div.append($hidden_input);
+
+}
+
+function create2DArray(nrows, ncols){
+
+    var arr = new Array(nrows);
+
+    for (var i = 0; i < nrows; ++i) {
+        arr[i] = new Array(ncols);
+        for (var j = 0; j < ncols; ++j) {
+            arr[i][j] = -1;
+        }
+    }
+    return arr;
+}
+
+// generate_mid_atlantic_ui
+//
+// Generates the user interface for the mid atlantic region.
+//
+// Parameters
+// ----------
+// num_years : integer
+//     Number of years the model is to run.
+// start_year : integer
+//     Year in which the model should start
+function generate_mid_atlantic_ui(num_years, start_year) {
+    var subareas = ['Hudson Canyon',
+                    'Virginia Beach',
+                    'Elephant Trunk Open',
+                    'Elephant Trunk Closed',
+                    'DelMarVa',
+                    'New York Bight',
+                    'Long Island',
+                    'Inshore NYB' ];
+            
+    var mortality = create2DArray(subareas.length, num_years);
+
+    // Hudson Canyon
+    mortality[0][0] = 0.02;
+    mortality[0][1] = 0.35;
+    mortality[0][2] = 0.45;
+    mortality[0][3] = 0.55;
+
+    // Elephant Trunk Open
+    mortality[2][0] = 0.00;
+    mortality[2][1] = 0.35;
+    mortality[2][2] = 0.45;
+    mortality[2][3] = 0.55;
+
+    // Elephant Trunk Closed
+    mortality[3][0] = 0.00;
+    mortality[3][1] = 0.35;
+    mortality[3][2] = 0.45;
+    mortality[3][3] = 0.55;
+
+    // DelMarVa
+    mortality[4][0] = 0.40;
+    mortality[4][1] = 0.35;
+    mortality[4][2] = 0.45;
+    mortality[4][3] = 0.55;
+
+    var $ma_div = $('#mid_atlantic_model_configuration');
+
+    var config = {
+        area: 'ma',
+        sub_area_names: subareas,
+        active_sub_areas: [true, false, true, true, true, false, false, false],
+        mortality: mortality,
+        start_year: start_year
+    };
+
+    generate_form_elements(config, $ma_div);
+}
+
+// generate_mid_atlantic_ui
+//
+// Generates the user interface for the mid atlantic region.
+//
+// Parameters
+// ----------
+// num_years : integer
+//     Number of years the model is to run.
+// start_year : integer
+//     Year in which the model should start
+function generate_georges_bank_ui(num_years, start_year) {
+
+    subareas = ['CA1-NA', 'CA1-Acc', 'CA2-NA', 'CA2-Acc', 'NLS-NA',
+                 'NLS-Acc', 'CA2-Ext', 'NLS-Ext', 'Sch', 'NEP', 'SEP'];
+
+    var mortality = create2DArray(subareas.length, num_years);
+
+    // CA1-CC
+    mortality[1][0] = 0.02;
+    mortality[1][1] = 0.00;
+    mortality[1][2] = 0.00;
+    mortality[1][3] = 0.00;
+    mortality[1][4] = 0.00;
+    mortality[1][5] = 0.25;
+    mortality[1][6] = 0.25;
+    mortality[1][7] = 0.25;
+    mortality[1][8] = 0.25;
+    mortality[1][9] = 0.25;
+    mortality[1][10] = 0.25;
+    mortality[1][11] = 0.25;
+    mortality[1][12] = 0.25;
+    mortality[1][13] = 0.25;
+    mortality[1][14] = 0.25;
+
+    // CA2-CC
+    mortality[3][0] = 0.60;
+    mortality[3][1] = 0.00;
+    mortality[3][2] = 0.30;
+    mortality[3][3] = 0.40;
+    mortality[3][4] = 0.50;
+    mortality[3][5] = 0.25;
+    mortality[3][6] = 0.25;
+    mortality[3][7] = 0.25;
+    mortality[3][8] = 0.25;
+    mortality[3][9] = 0.25;
+    mortality[3][10] = 0.25;
+    mortality[3][11] = 0.25;
+    mortality[3][12] = 0.25;
+    mortality[3][13] = 0.25;
+    mortality[3][14] = 0.25;
+
+    // NLS-NA
+    mortality[5][0] = 0.80;
+    mortality[5][1] = 0.00;
+    mortality[5][2] = 0.00;
+    mortality[5][3] = 0.30;
+    mortality[5][4] = 0.40;
+    mortality[5][5] = 0.25;
+    mortality[5][6] = 0.25;
+    mortality[5][7] = 0.25;
+    mortality[5][8] = 0.25;
+    mortality[5][9] = 0.25;
+    mortality[5][10] = 0.25;
+    mortality[5][11] = 0.25;
+    mortality[5][12] = 0.25;
+    mortality[5][13] = 0.25;
+    mortality[5][14] = 0.25;
+
+    var $gb_div = $('#georges_bank_model_configuration');
+
+    var config = {
+        area: 'gb',
+        sub_area_names: subareas,
+        active_sub_areas: [false, true, false, true, false, true,
+                           false, false, false, false, false],
+        mortality: mortality,
+        start_year: start_year
+    };
+
+    generate_form_elements(config, $gb_div);
+}
+
+
+// generate_model_configuration_ui
+// 
+// Generates the user interface using jQuery.
+function generate_model_configuration_ui() {
+
+    var num_years = 15;
+    var start_year = 2014;
+
+    generate_mid_atlantic_ui(num_years, start_year);
+    generate_georges_bank_ui(num_years, start_year);
+
+    // If any of the sub area checkboxes are clicked, all of the input boxes
+    // in that column need to be either activated or deactivated.
+    $('.sub_area_checkbox').click(toggle_sub_area_text_boxes);
+
+    // Need to communicate the model starting year and number of years that
+    // the model should run.
+    var $hidden_input =  $("<input></input>", {'type': 'hidden',
+                                               'name': 'start_year',
+                                               'value' : start_year});
+    $('form').append($hidden_input);
+
+    var $hidden_input =  $("<input></input>", {'type': 'hidden',
+                                               'name': 'num_years',
+                                               'value' : num_years});
+    $('form').append($hidden_input);
+}
+
+
+
+// Event handler for managing a tabbed panel containing the model
+// configurations for the Mid Atlantic and Georges Bank region.
+//
+// Ref:  JavaScript & jQuery:  The Missing Manual, Second Edition, chapter 10
+function tabbedPanelEffectHandler() {
+    // "this" is the hyperlink element that was just clicked.
+    var $this = $(this);
+
+    // Hide all the DIVs with the panel class (these have the model
+    // configuration content for each area (MA and GB).
+    $('.panel').hide();
+
+    // Remove the "active" class from from the tab (actually a hyperlink)
+    // that was visible before the mouse click.  Add the "active" class to
+    // the tab (hyperlink) that was just clicked.  This allows the CSS
+    // to highlight the active tab in a pleasing manner.
+    $('.tabs a.active').removeClass('active');
+    $this.addClass('active').blur();
+
+    // Locate the panel associated with the active tab and make it visible.
+    var panel = $this.attr('href');
+    $(panel).fadeIn(250);
+
+    // Returning false tells the browser not to "follow" the link.  If this
+    // were not done, the browser might "jump" around if the browser window
+    // is small.
+    return false;
+}
+
+
+</script>
+<script>
+$(document).ready(function() {
+	
+    generate_model_configuration_ui();
+
+    $('.tabs a').on("click", tabbedPanelEffectHandler);
+
+    // Set the initial slider display.  Otherwise it is blank until the slider
+    // moves.
+    var initial_slider_val = $( '#open_area_f_mortality_slider_id' ).slider( 'value' );
+    var text = initial_slider_val = (initial_slider_val / 100.0).toFixed(2);
+    $( "#open_area_f_mortality_display_id" ).val( text );
+
+    // The model takes a while to run, so keep the user from hitting the submit
+    // button twice.  Do this by disabling the submit button.
+    $('form').submit(function(){
+        var submitButton = $(this).find(':submit');
+        submitButton.attr('disabled',true);
+        submitButton.val('...running model');
+    });
+
+    // Generate a click event on the first tab so that at least one tab is
+    // visible.
+    $('.tabs li:first a').click();
+
+}); // end ready
+</script>
+</head>
+<body>
+    <h1>Sams Model</h1>
+    <!-- See chapter 10 of "JavaScript & jQuery:  The Missing Manual, Second
+         Edition" for an explanation of the CSS/HTML -->
+    <div class="tabbedPanels">
+        <ul class="tabs">
+            <li><a id="ma_link_id" href="#mid_atlantic_model_configuration">Mid Atlantic</a></li>
+            <li><a id="gb_link_id" href="#georges_bank_model_configuration">Georges Bank</a></li>
+        </ul>
+        <div class="panelContainer">
+            <form method="POST" id="model_configuration" action="/sams/run">
+                <div class="panel" id="mid_atlantic_model_configuration">
+                </div>
+                <div class="panel" id="georges_bank_model_configuration">
+                </div>
+
+                <!-- Not part of tabbedPanels discussion mentioned above -->
+                <div class="centre">
+                    <h2 id="open_area_f_label_id">Open Area F</h2>
+                    <div id="open_area_f_mortality_slider_id"></div>
+                    <div>
+                        <input
+                            id="open_area_f_mortality_display_id",
+                            name="open_area_f_mortality"
+                            type="text"
+                            readonly>
+                    </div>
+                </div>
+
+
+                <div>
+                    <input id="submit_id" type="submit" name="submit" value="Run Model">
+                </div>
+                {% csrf_token %}
+            </form>
+        </div>
+    </div>
+</body>
+</html>

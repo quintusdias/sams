@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="utf-8">
+<title>Sams Model for scallops</title>
+
+<link rel="stylesheet" href="//code.jquery.com/ui/1.11.3/themes/smoothness/jquery-ui.css">
+<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+<script src="//code.jquery.com/ui/1.11.3/jquery-ui.js"></script>
+
+<link href="/static/css/sams.css" rel="stylesheet" type="text/css">
+
+<script>
+// Event handler for managing a tabbed panel containing the model
+// configurations for the Mid Atlantic and Georges Bank region.
+//
+// Ref:  JavaScript & jQuery:  The Missing Manual, Second Edition, chapter 10
+function tabbedPanelEffectHandler() {
+    // "this" is the hyperlink element that was just clicked.
+    var $this = $(this);
+
+    // Hide all the DIVs with the panel class (these have the model
+    // configuration content for each area (MA and GB).
+    $('.panel').hide();
+
+    // Remove the "active" class from from the tab (actually a hyperlink)
+    // that was visible before the mouse click.  Add the "active" class to
+    // the tab (hyperlink) that was just clicked.  This allows the CSS
+    // to highlight the active tab in a pleasing manner.
+    $('.tabs a.active').removeClass('active');
+    $this.addClass('active').blur();
+
+    // Locate the panel associated with the active tab and make it visible.
+    var panel = $this.attr('href');
+    $(panel).fadeIn(250);
+
+    // Returning false tells the browser not to "follow" the link.  If this
+    // were not done, the browser might "jump" around if the browser window
+    // is small.
+    return false;
+}
+</script>
+<script>
+$(document).ready(function() {
+	
+    $('.tabs a').on("click", tabbedPanelEffectHandler);
+
+    // Generate a click event on the first tab so that at least one tab is
+    // visible.
+    $('.tabs li:first a').click();
+
+}); // end ready
+</script>
+</head>
+<body>
+    <!-- header -->
+    <div id="header_id">
+        <a id="new_model_run_link_id" href="/sams/">New Model Run</a>
+    </div>
+
+    <div>
+        <h1>Model Results</h1>
+        <div class="tabbedPanels">
+            <ul class="tabs">
+                <li><a id="ma_hudson_canyon_shell_height_link_id"
+                       href="#ma_hudson_canyon_shell_height">Hudson Canyon</a></li>
+                <li><a id="ma_virginia_beach_shell_height_link_id"
+                       href="#ma_virginia_beach_shell_height">Virginia Beach</a></li>
+                <li><a id="ma_elephant_trunk_open_shell_height_link_id"
+                       href="#ma_elephant_trunk_open_shell_height">Elephant Trunk Open</a></li>
+                <li><a id="ma_elephant_trunk_closed_shell_height_link_id"
+                       href="#ma_elephant_trunk_closed_shell_height">Elephant Trunk Closed</a></li>
+                <li><a id="ma_delmarva_shell_height_link_id"
+                       href="#ma_delmarva_shell_height">DelMarVa</a></li>
+                <li><a id="ma_new_york_bight_shell_height_link_id"
+                       href="#ma_new_york_bight_shell_height">New York Bight</a></li>
+                <li><a id="ma_long_island_shell_height_link_id"
+                       href="#ma_long_island_shell_height">Long Island</a></li>
+                <li><a id="ma_inshore_nyb_shell_height_link_id"
+                       href="#ma_inshore_nyb_shell_height">Inshore NYB</a></li>
+                <li><a id="gb_ca1_na_shell_height_link_id"
+                       href="#gb_ca1_na_shell_height">CA1-NA</a></li>
+                <li><a id="gb_ca1_acc_shell_height_link_id"
+                       href="#gb_ca1_acc_shell_height">CA1-ACC</a></li>
+                <li><a id="gb_ca2_na_shell_height_link_id"
+                       href="#gb_ca2_na_shell_height">CA2-NA</a></li>
+                <li><a id="gb_ca2_acc_shell_height_link_id"
+                       href="#gb_ca2_acc_shell_height">CA2-ACC</a></li>
+                <li><a id="gb_nls_na_shell_height_link_id"
+                       href="#gb_nls_na_shell_height">NLS-NA</a></li>
+                <li><a id="gb_nls_acc_shell_height_link_id"
+                       href="#gb_nls_acc_shell_height">NLS-ACC</a></li>
+                <li><a id="gb_ca2_ext_shell_height_link_id"
+                       href="#gb_ca2_ext_shell_height">CA2_Ext</a></li>
+                <li><a id="gb_nls_ext_shell_height_link_id"
+                       href="#gb_nls_ext_shell_height">NLS-Exp</a></li>
+                <li><a id="gb_sch_shell_height_link_id"
+                       href="#gb_sch_shell_height">SCH</a></li>
+                <li><a id="gb_nep_shell_height_link_id"
+                       href="#gb_nep_shell_height">NEP</a></li>
+                <li><a id="gb_sep_shell_height_link_id"
+                       href="#gb_sep_shell_height">SEP</a></li>
+                <li><a id="biomass_by_region_link_id"
+                       href="#biomass_by_region_id">Biomass By Region</a></li>
+                <li><a id="biomass_by_quantiles_link_id"
+                       href="#biomass_by_quantiles_id">Biomass By Quantiles</a></li>
+                <li><a id="mid_atlantic_biomass_link_id"
+                       href="#mid_atlantic_biomass_id">Mid Atlantic Biomass</a></li>
+                <li><a id="georges_bank_biomass_link_id"
+                       href="#georges_bank_biomass_id">Georges Bank Biomass</a></li>
+                <li><a id="fishing_mortality_link_id"
+                       href="#fishing_mortality_id">Fishing Mortality</a></li>
+                <li><a id="landings_link_id"
+                       href="#landings_id">Landings</a></li>
+                <li><a id="landings_quantiles_link_id"
+                       href="#landings_quantiles_id">Landings Quantiles</a></li>
+                <li><a id="days_at_sea_link_id"
+                       href="#days_at_sea_id">Days at Sea</a></li>
+            </ul>
+    
+            <div class="panelContainer">
+    
+                <div class="panel" id="ma_hudson_canyon_shell_height">
+                    <img src="/sams/images/shell_height/hudson_canyon/">
+                </div>
+    
+                <div class="panel" id="ma_virginia_beach_shell_height">
+                    <img src="/sams/images/shell_height/virginia_beach/">
+                </div>
+    
+                <div class="panel" id="ma_elephant_trunk_open_shell_height">
+                    <img src="/sams/images/shell_height/elephant_trunk_open/">
+                </div>
+    
+                <div class="panel" id="ma_elephant_trunk_closed_shell_height">
+                    <img src="/sams/images/shell_height/elephant_trunk_closed/">
+                </div>
+    
+                <div class="panel" id="ma_delmarva_shell_height">
+                    <img src="/sams/images/shell_height/delmarva/">
+                </div>
+    
+                <div class="panel" id="ma_new_york_bight_shell_height">
+                    <img src="/sams/images/shell_height/new_york_bight/">
+                </div>
+    
+                <div class="panel" id="ma_long_island_shell_height">
+                    <img src="/sams/images/shell_height/long_island/">
+                </div>
+    
+                <div class="panel" id="ma_inshore_nyb_shell_height">
+                    <img src="/sams/images/shell_height/inshore_nyb/">
+                </div>
+    
+                <div class="panel" id="gb_ca1_na_shell_height">
+                    <img src="/sams/images/shell_height/ca1-na/">
+                </div>
+    
+                <div class="panel" id="gb_ca1_acc_shell_height">
+                    <img src="/sams/images/shell_height/ca1-acc/">
+                </div>
+    
+                <div class="panel" id="gb_ca2_na_shell_height">
+                    <img src="/sams/images/shell_height/ca2-na/">
+                </div>
+    
+                <div class="panel" id="gb_ca2_acc_shell_height">
+                    <img src="/sams/images/shell_height/ca2-acc/">
+                </div>
+    
+                <div class="panel" id="gb_nls_na_shell_height">
+                    <img src="/sams/images/shell_height/nls-na/">
+                </div>
+    
+                <div class="panel" id="gb_nls_acc_shell_height">
+                    <img src="/sams/images/shell_height/nls-acc/">
+                </div>
+    
+                <div class="panel" id="gb_ca2_ext_shell_height">
+                    <img src="/sams/images/shell_height/ca2-ext/">
+                </div>
+    
+                <div class="panel" id="gb_nls_ext_shell_height">
+                    <img src="/sams/images/shell_height/nls-ext/">
+                </div>
+    
+                <div class="panel" id="gb_sch_shell_height">
+                    <img src="/sams/images/shell_height/sch/">
+                </div>
+    
+                <div class="panel" id="gb_nep_shell_height">
+                    <img src="/sams/images/shell_height/nep/">
+                </div>
+    
+                <div class="panel" id="gb_sep_shell_height">
+                    <img src="/sams/images/shell_height/sep/">
+                </div>
+    
+                <div class="panel" id="biomass_by_region_id">
+                    <img src="/sams/images/biomass/by_region/">
+                </div>
+    
+                <div class="panel" id="biomass_by_quantiles_id">
+                    <img src="/sams/images/biomass/quantiles/">
+                </div>
+    
+                <div class="panel" id="mid_atlantic_biomass_id">
+                    <img src="/sams/images/biomass/mid_atlantic_by_sub_area/">
+                </div>
+    
+                <div class="panel" id="georges_bank_biomass_id">
+                    <img src="/sams/images/biomass/georges_bank_by_sub_area/">
+                </div>
+    
+                <div class="panel" id="fishing_mortality_id">
+                    <img src="/sams/images/fishing_mortality/fishing_mortality/">
+                </div>
+    
+                <div class="panel" id="landings_id">
+                    <img src="/sams/images/landings/landings/">
+                </div>
+    
+                <div class="panel" id="landings_quantiles_id">
+                    <img src="/sams/images/landings/quantiles/">
+                </div>
+    
+                <div class="panel" id="days_at_sea_id">
+                    <img src="/sams/images/days_at_sea/days_at_sea/">
+                </div>
+    
+            </div>
+    
+        </div>
+    </div>
+    <div>
+        <a href="/sams/model_configuration/">Model Configuration File</a>
+    </div>
+
+</body>
+</html>

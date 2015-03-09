@@ -1,0 +1,8 @@
+db.sqlite3
+__pycache__
+*.pyc
+*.swp
+*.swp
+*.png
+samsweb/static/run/basev3.dat
+samsweb/static/run/bootbasev3.dat
