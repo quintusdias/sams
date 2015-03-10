@@ -74,6 +74,14 @@ class SamsTests(TestCase):
         data['start_year'] = 2014
         data['num_years'] = 15
         data['open_area_f_mortality'] = 0.48
+
+        data['ma_natural_mortality'] = 0.20
+        data['ma_discard_mortality'] = 0.20
+        data['ma_incidental_mortality'] = 0.10
+
+        data['gb_natural_mortality'] = 0.16
+        data['gb_discard_mortality'] = 0.20
+        data['gb_incidental_mortality'] = 0.20
         return(data)
 
 
@@ -146,6 +154,15 @@ class SamsTests(TestCase):
         data['start_year'] = 2014
         data['num_years'] = 15
         data['open_area_f_mortality'] = 0.48
+
+        data['ma_natural_mortality'] = 0.20
+        data['ma_discard_mortality'] = 0.20
+        data['ma_incidental_mortality'] = 0.10
+
+        data['gb_natural_mortality'] = 0.16
+        data['gb_discard_mortality'] = 0.20
+        data['gb_incidental_mortality'] = 0.20
+
         return(data)
 
 
@@ -243,6 +260,15 @@ class SamsTests(TestCase):
         data['start_year'] = 2014
         data['num_years'] = 15
         data['open_area_f_mortality'] = 0.48
+
+        data['ma_natural_mortality'] = 0.20
+        data['ma_discard_mortality'] = 0.20
+        data['ma_incidental_mortality'] = 0.10
+
+        data['gb_natural_mortality'] = 0.16
+        data['gb_discard_mortality'] = 0.20
+        data['gb_incidental_mortality'] = 0.20
+
         return(data)
 
 

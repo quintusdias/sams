@@ -62,3 +62,14 @@ div.centre {
     margin-right: auto;
     width: 10em;
 }
+
+/*
+ * Float the mortality sliders side-by-side, remove the bullets.
+ * */
+.mortality_sliders li {
+	float: left;
+	list-style: none;
+	padding: 10px;
+	margin: 10px;
+}
+

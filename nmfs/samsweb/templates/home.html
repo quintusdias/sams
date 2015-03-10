@@ -200,7 +200,7 @@ function append_mortality_table_rows(config, $table) {
 
 }
 
-// generate_form_elements
+// generate_mortality_elements
 //
 //    Generate a table containing the form elements for a model area.
 //
@@ -221,7 +221,7 @@ function append_mortality_table_rows(config, $table) {
 //         The year that the model is to start.
 // div : DOM element
 //     DIV element that serves as a parent to the generated table .
-function generate_form_elements(config, div) {
+function generate_mortality_elements(config, div) {
 
     // Mortality table
     var $table = $("<table>", {'class': 'mortality'});
@@ -301,7 +301,8 @@ function generate_mid_atlantic_ui(num_years, start_year) {
     mortality[4][2] = 0.45;
     mortality[4][3] = 0.55;
 
-    var $ma_div = $('#mid_atlantic_model_configuration');
+    ma_div_id = 'mid_atlantic_model_configuration';
+    var $ma_div = $('#' + ma_div_id);
 
     var config = {
         area: 'ma',
@@ -311,8 +312,100 @@ function generate_mid_atlantic_ui(num_years, start_year) {
         start_year: start_year
     };
 
-    generate_form_elements(config, $ma_div);
+    generate_mortality_elements(config, $ma_div);
+
+    // Generate the sliders for natural, discard, and incidental mortality.
+    generate_natural_discard_incidental_sliders(ma_div_id, 0.2, 0.2, 0.1);
+    
 }
+
+function generate_mortality_slider(abbrev, label, mortality) {
+
+    var $li = $("<li></li>");
+
+    var $div = $("<div></div>");
+
+    var $h3 = $("<h3>" + label + "</h3>");
+    $div.append($h3);
+
+    var div_id = abbrev + '_' + label.toLowerCase().replace(' ', '_') + "_div_id";
+    var $slider_div = $("<div></div>", {'id': div_id});
+    $div.append($slider_div)
+
+    var target_id = '#' + abbrev + '_' + label.toLowerCase().replace(' ', '_') + '_id';
+    $slider_div.slider({
+        min: 0,
+        max: 100,
+        value: mortality*100,
+        change: function( event, ui ) {
+            $( target_id ).val( ui.value/100.0 );
+        },
+    });
+
+    var input_id = abbrev + '_' + label.toLowerCase().replace(' ', '_') + '_id';
+    var name = abbrev + '_' + label.toLowerCase().replace(' ', '_');
+    var the_class = 'mortality_slider_display';
+
+    var $ipt = $("<input></input>", {'id': input_id,
+                                     'type': 'text',
+                                     'name': name,
+                                     'class': the_class})
+    $ipt.attr('readonly', true);
+
+    // Set the initial value to be that of the slider.
+    var text = mortality.toFixed(2);
+    $ipt.val( text );
+
+    $div.append($ipt);
+    $li.append($div);
+
+    return $li;
+}
+
+// generate_natural_discard_incidental_sliders
+//
+// Parameters
+// ----------
+// div : DOM element
+//     DIV element that serves as a parent to the sliders
+// natural, discard, incidental : float
+//     TODO
+function generate_natural_discard_incidental_sliders(parent_div_id, natural, discard, incidental) {
+
+    var abbrev = "";
+    if ( parent_div_id == 'mid_atlantic_model_configuration' ) {
+        abbrev = 'ma';
+    } else {
+        abbrev = 'gb';
+    }
+
+    var $sliders_div = $("<div>", {'class': 'mortality_sliders',
+                                   'id': abbrev + '_mortality_sliders_div_id'});
+
+    var $ul = $("<ul></ul>");
+
+    var label = "Natural Mortality";
+    var $li = generate_mortality_slider(abbrev, label, natural);
+    $ul.append($li);
+
+    var label = "Discard Mortality";
+    var $li = generate_mortality_slider(abbrev, label, discard);
+    $ul.append($li);
+
+    var label = "Incidental Mortality";
+    var $li = generate_mortality_slider(abbrev, label, incidental);
+    $ul.append($li);
+
+    // generate the discard mortality slider
+    // generate the incidental mortality slider
+
+    $sliders_div.append($ul);
+
+    var $parent_div = $('#' + parent_div_id);
+    $parent_div.append($sliders_div);
+
+}
+
 
 // generate_mid_atlantic_ui
 //
@@ -382,7 +475,8 @@ function generate_georges_bank_ui(num_years, start_year) {
     mortality[5][13] = 0.25;
     mortality[5][14] = 0.25;
 
-    var $gb_div = $('#georges_bank_model_configuration');
+    var div_id = 'georges_bank_model_configuration';
+    var $gb_div = $('#' + div_id);
 
     var config = {
         area: 'gb',
@@ -393,7 +487,9 @@ function generate_georges_bank_ui(num_years, start_year) {
         start_year: start_year
     };
 
-    generate_form_elements(config, $gb_div);
+    generate_mortality_elements(config, $gb_div);
+
+    generate_natural_discard_incidental_sliders(div_id, 0.16, 0.2, 0.2); 
 }
 
 
@@ -465,8 +561,8 @@ $(document).ready(function() {
 
     $('.tabs a').on("click", tabbedPanelEffectHandler);
 
-    // Set the initial slider display.  Otherwise it is blank until the slider
-    // moves.
+    // Set the initial open area f slider display.  Otherwise it is blank until
+    // the slider moves.
     var initial_slider_val = $( '#open_area_f_mortality_slider_id' ).slider( 'value' );
     var text = initial_slider_val = (initial_slider_val / 100.0).toFixed(2);
     $( "#open_area_f_mortality_display_id" ).val( text );

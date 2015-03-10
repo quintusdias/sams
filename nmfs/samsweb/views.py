@@ -68,13 +68,20 @@ def run_model(request):
 
     params = unpack_post_parameters(request.POST)
 
-    config = []
+    config = {}
     df = pd.DataFrame(params['mid_atlantic_mortality'],
                       columns=params['mid_atlantic_active_areas'])
-    config.append(df)
+    config['mid_atlantic_sub_area_mortality'] = df
+
     df = pd.DataFrame(params['georges_bank_mortality'],
                       columns=params['georges_bank_active_areas'])
-    config.append(df)
+    config['georges_bank_sub_area_mortality'] = df
+
+    # Add the natural, discard, and incident mortality for each region.
+    for region in ['mid_atlantic', 'georges_bank']:
+        for label in ['natural', 'discard', 'incidental']:
+            key = region + '_' + label + '_mortality'
+            config[key] = params[key]
 
     # Invoke the SAMS model wrapper, which in turn runs the model.
     with tempfile.TemporaryDirectory() as tdir:
@@ -577,6 +584,16 @@ def unpack_post_parameters(rpost):
     mortality = unpack_mortality('ma', rpost)
     data['mid_atlantic_mortality'] = mortality.T[active_areas].T
     data['mid_atlantic_active_areas'] = [str(x+1) for x in active_areas]
+
+    # Retrieve the natural, discard, and incident mortality for each region.
+    data['mid_atlantic_natural_mortality'] = float(rpost['ma_natural_mortality'])
+    data['mid_atlantic_discard_mortality'] = float(rpost['ma_discard_mortality'])
+    data['mid_atlantic_incidental_mortality'] = float(rpost['ma_incidental_mortality'])
+
+    data['georges_bank_natural_mortality'] = float(rpost['gb_natural_mortality'])
+    data['georges_bank_discard_mortality'] = float(rpost['gb_discard_mortality'])
+    data['georges_bank_incidental_mortality'] = float(rpost['gb_incidental_mortality'])
+
 
     return data
 

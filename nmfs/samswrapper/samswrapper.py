@@ -7,7 +7,6 @@ import io
 import os
 import pkg_resources as pkg
 import shutil
-import statistics
 import subprocess
 import sys
 import time
@@ -47,9 +46,10 @@ class SamsWrapper(object):
             number of model runs
         startyear : int
             year that the model should start
-        access_area_management | list
-            two-element list, each item is a pandas.DataFrame that describes
-            how each area is configured
+        access_area_management : dict
+            Items include sub area mortality (dataframes) for each
+            region, plus scalar values for natural, discard, and incident
+            mortality for each region.
         outdir : str
             Directory where the model is to be executed.  It is in this
             directory that model outputs will be found.
@@ -61,18 +61,20 @@ class SamsWrapper(object):
         """
         self.numruns = numruns
         self.startyear = startyear
-        if access_area_management is None:
-            self.access_area_management = [core._df_mid_atlantic,
-                                           core._df_georges_bank]
-        else:
-            self.access_area_management = access_area_management
 
-        # validate the configuration
-        nyears = [df.shape[0] for df in self.access_area_management]
-        if statistics.stdev(nyears) > 0:
-            msg = "Each access area configuration must have the same number "
-            msg += "of years."
-            raise RuntimeError(msg)
+        config = [access_area_management['mid_atlantic_sub_area_mortality'],
+                  access_area_management['georges_bank_sub_area_mortality']]
+        self.access_area_management = config
+
+        self.config = {}
+        self.config['mid_atlantic'] = {}
+        self.config['georges_bank'] = {}
+
+        for region in ['mid_atlantic', 'georges_bank']:
+            for label in ['natural', 'discard', 'incidental']:
+                key1 = label + '_mortality'
+                key2 = region + '_' + label + '_mortality'
+                self.config[region][key1] = access_area_management[key2]
 
         # Number of years is the number of rows in each region's access area
         # configuration.
@@ -393,14 +395,26 @@ class SamsWrapper(object):
                         column_values += ' {}'.format(x)
                 s.write('{0} {1}\n'.format(column_ids, column_values))
 
-                #for sub_area in sub_areas.index:
-                #    s.write('{0} '.format(sub_area))
-                #s.write(' ')
-                #for sub_area_mortality in sub_areas:
-                #    s.write('{0} '.format(sub_area_mortality))
-                #s.write('\n')
-
         access_area_management_string = s.getvalue().strip()
+
+        # Create the string defining the natural, discard, and incidental
+        # mortality.
+        s = io.StringIO()
+        values = (self.config['mid_atlantic']['natural_mortality'],
+                  self.config['mid_atlantic']['discard_mortality'],
+                  self.config['mid_atlantic']['incidental_mortality'])
+        for _ in range(11):
+            # TODO: why?
+            s.write('{:0.2f} {:0.2f} {:0.2f}\n'.format(*values))
+
+        values = (self.config['georges_bank']['natural_mortality'],
+                  self.config['georges_bank']['discard_mortality'],
+                  self.config['georges_bank']['incidental_mortality'])
+        for _ in range(11):
+            # TODO: why?
+            s.write('{:0.2f} {:0.2f} {:0.2f}\n'.format(*values))
+
+        region_mortalities = s.getvalue().strip()
 
         # Copy the configuration and boot file  to the current directory.
         # It would appear that SAMS needs them in the current working
@@ -413,6 +427,7 @@ class SamsWrapper(object):
                       'access_area_management': access_area_management_string,
                       'startyear': self.startyear,
                       'numyears': self.numyears,
+                      'natural_discard_incidental_mortality': region_mortalities,
                       'open_area_f': self.open_area_f}
             self.model_configuration = config.format(**kwargs)
             with open(outputfile, 'wt') as ofptr:
