@@ -330,7 +330,7 @@ function generate_mortality_slider(abbrev, label, mortality) {
     $div.append($br);
 
     var span_id = abbrev + '_' + label.toLowerCase().replace(' ', '_') + "_span_id";
-    var $span = $("<div></div>", {'id': span_id});
+    var $span = $("<span></span>", {'id': span_id});
     $div.append($span);
 
     var $br = $("<br></br>");
@@ -381,7 +381,7 @@ function generate_natural_discard_incidental_sliders(parent_div_id, natural, dis
     }
 
     var $sliders_div = $("<div>", {'class': 'mortality_sliders',
-                                   'id': 'mortality_sliders_div_id'});
+                                   'id': abbrev + '_mortality_sliders_div_id'});
 
     var $ul = $("<ul></ul>");
 
