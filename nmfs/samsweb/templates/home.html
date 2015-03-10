@@ -326,13 +326,19 @@ function generate_mortality_slider(abbrev, label, mortality) {
     var $h3 = $("<h3>" + label + "</h3>");
     $div.append($h3);
 
-    var inner_div_id = abbrev + '_' + label.toLowerCase().replace(' ', '_') + "_inner_div_id";
-    var $inner_div = $("<div></div>", {'id': inner_div_id});
-    $div.append($inner_div);
+    var $br = $("<br></br>");
+    $div.append($br);
+
+    var span_id = abbrev + '_' + label.toLowerCase().replace(' ', '_') + "_span_id";
+    var $span = $("<div></div>", {'id': span_id});
+    $div.append($span);
+
+    var $br = $("<br></br>");
+    $div.append($br);
 
     var target_id = '#' + abbrev + '_' + label.toLowerCase().replace(' ', '_') + '_id';
 
-    $inner_div.slider({
+    $span.slider({
         min: 0,
         max: 100,
         value: mortality*100,
