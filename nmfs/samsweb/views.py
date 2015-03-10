@@ -175,16 +175,22 @@ def plot_landings_quantiles(df):
     q25 = grp.quantile(0.25).loc[:, 'All', 'All']                           
     q10 = grp.quantile(0.10).loc[:, 'All', 'All']                           
 
-    # Don't plot the first year.
+    # Don't plot the first year.  Also, the data is shifted by one year.
     # For some reason, restricting the year range above results in a series
     # that still have a multi-index.  This seems like the cleanest way to do
     # that.
-    qmean = qmean.iloc[1:]
-    q90 = q90.iloc[1:]
-    q75 = q75.iloc[1:]
-    q50 = q50.iloc[1:]
-    q25 = q25.iloc[1:]
-    q10 = q10.iloc[1:]
+    qmean = qmean.iloc[2:]
+    q90 = q90.iloc[2:]
+    q75 = q75.iloc[2:]
+    q50 = q50.iloc[2:]
+    q25 = q25.iloc[2:]
+    q10 = q10.iloc[2:]
+    qmean.index = qmean.index - 1
+    q90.index = q90.index - 1
+    q75.index = q75.index - 1
+    q50.index = q50.index - 1
+    q25.index = q25.index - 1
+    q10.index = q10.index - 1
                                                                                 
     colors = seaborn.color_palette(n_colors=3);
 
@@ -229,13 +235,16 @@ def plot_landings(df):
     ma_data = Fn.loc[:, '1', 'All']
     gb_data = Fn.loc[:, '2', 'All']
 
-    # Don't plot the first year.
+    # Don't plot the first year.  Also, the data is shifted by one year.
     # For some reason, restricting the year range above results in a series
     # that still have a multi-index.  This seems like the cleanest way to do
     # that.
-    all_data = all_data.iloc[1:]
-    ma_data = ma_data.iloc[1:]
-    gb_data = gb_data.iloc[1:]
+    all_data = all_data.iloc[2:]
+    ma_data = ma_data.iloc[2:]
+    gb_data = gb_data.iloc[2:]
+    all_data.index = all_data.index - 1
+    ma_data.index = ma_data.index - 1
+    gb_data.index = gb_data.index - 1
 
     all_data.plot(ax=ax, label='All') 
     ma_data.plot(ax=ax, label='Mid Atlantic')
@@ -272,9 +281,25 @@ def plot_fishing_mortality(df):
 
     Fn = df['Fn'].groupby([df.Year, df.Reg, df.Sreg]).mean()
 
-    Fn.loc[:, 'All', 'All'].plot(ax=ax, label='All') 
-    Fn.loc[:, '1', 'All'].plot(ax=ax, label='Mid Atlantic')
-    Fn.loc[:, '2', 'All'].plot(ax=ax, label='Georges Bank')
+    all_fishing_mortality = Fn.loc[:, 'All', 'All']
+    ma_fishing_mortality = Fn.loc[:, '1', 'All']
+    gb_fishing_mortality = Fn.loc[:, '2', 'All']
+
+    # Don't plot the first year.  Also, the data is shifted by one year.
+    # For some reason, restricting the year range above results in a series
+    # that still have a multi-index.  This seems like the cleanest way to do
+    # that.
+    all_fishing_mortality = all_fishing_mortality[2:]
+    ma_fishing_mortality = ma_fishing_mortality[2:]
+    gb_fishing_mortality = gb_fishing_mortality[2:]
+
+    all_fishing_mortality.index = all_fishing_mortality.index - 1
+    ma_fishing_mortality.index = ma_fishing_mortality.index - 1
+    gb_fishing_mortality.index = gb_fishing_mortality.index - 1
+
+    all_fishing_mortality.plot(ax=ax, label='All') 
+    ma_fishing_mortality.plot(ax=ax, label='Mid Atlantic')
+    gb_fishing_mortality.plot(ax=ax, label='Georges Bank')
 
     ax.legend(loc='best')
 
