@@ -264,6 +264,8 @@ def plot_area_swept(df):
     ma_area_swept.plot(ax=ax, label='Mid Atlantic')
     gb_area_swept.plot(ax=ax, label='Georges Bank')
 
+    ax.set_ylabel('$nmi^2$')
+
     ax.legend(loc='best')
 
     content = io.BytesIO()
