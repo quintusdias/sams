@@ -1,9 +1,8 @@
 from django.core.urlresolvers import resolve
 from django.test import TestCase
-from django.http import HttpRequest
 
-from samswrapper import SamsWrapper
 from samsweb.views import home_page
+
 
 class SamsTests(TestCase):
 
@@ -84,7 +83,6 @@ class SamsTests(TestCase):
         data['gb_incidental_mortality'] = 0.20
         return(data)
 
-
     def generate_elephand_trunk_closed_extended(self):
         data = {'ma_row_0_col_0': '0.02',
                 'ma_row_1_col_0': '0.35',
@@ -164,7 +162,6 @@ class SamsTests(TestCase):
         data['gb_incidental_mortality'] = 0.20
 
         return(data)
-
 
     def generate_gb6_post_params(self):
         """
@@ -271,7 +268,6 @@ class SamsTests(TestCase):
 
         return(data)
 
-
     def test_root_url_resolves_to_home_page_view(self):
         found = resolve('/sams/')
         self.assertEqual(found.func, home_page)
@@ -304,4 +300,3 @@ class SamsTests(TestCase):
         data = self.generate_gb6_post_params()
         response = self.client.post('/sams/run', data)
         self.assertContains(response, 'Model Results')
-

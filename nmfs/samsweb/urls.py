@@ -1,6 +1,7 @@
 from django.conf.urls import patterns, url
 
-urlpatterns = patterns('',
+urlpatterns = patterns(
+    '',
     url(r'^$', 'samsweb.views.home_page', name='home'),
     url(r'^run$', 'samsweb.views.run_model', name='run_model'),
     url(r'^model_configuration/$',
