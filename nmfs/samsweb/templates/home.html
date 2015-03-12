@@ -12,19 +12,6 @@
 <link href="/static/css/sams.css" rel="stylesheet" type="text/css">
 
 <script>
-    $(function() {
-        $( "#open_area_f_mortality_slider_id" ).slider({
-            min: 0,
-            max: 100,
-            value: 48,
-            change: function( event, ui ) {
-                $( "#open_area_f_mortality_display_id" ).val( ui.value/100.0 );
-            },
-        });
-    });
-</script>
-
-<script>
 // append_mortality_subregion_header
 //
 // Append a header row that displays sub region names.
@@ -493,6 +480,56 @@ function generate_georges_bank_ui(num_years, start_year) {
 }
 
 
+// create a slider to control the open area f value
+//
+function setup_open_area_f_slider() {
+
+    // <h2 id="open_area_f_label_id">Open Area F</h2>
+    // <div id="open_area_f_mortality_slider_id"></div>
+    // <div>
+    //     <input
+    //            id="open_area_f_mortality_display_id",
+    //            name="open_area_f_mortality"
+    //            type="text"
+    //            readonly>
+    // </div>
+    var initial_slider_value = 48;
+
+    var $parent_div = $('#id_open_area_f_div');
+
+    var $h2 = $("<h2></h2>", {'class': 'sams_slider_label',
+                              'id': 'open_area_f_label_id'});
+    $h2.text('Open Area F');
+    $parent_div.append($h2);
+
+    var $slider_div = $('<div></div>', {'id': 'open_area_f_mortality_slider_id'});
+    $parent_div.append($slider_div);
+
+    var slider_target_id = 'open_area_f_mortality_display_id';
+    $slider_div.slider({
+        min: 0,
+        max: 100,
+        value: initial_slider_value,
+        change: function( event, ui ) {
+            $( '#' + slider_target_id ).val( ui.value/100.0 );
+        },
+    });
+
+    // Create the text box that will display the slider value.
+    var $input_div = $("<div></div>");
+    var $ipt = $("<input></input>", {'id': slider_target_id,
+                                     'type': 'text',
+                                     'name': 'open_area_f_mortality'})
+    var text = (initial_slider_value / 100).toFixed(2);
+    $ipt.val( text );
+    $ipt.attr('readonly', true);
+    $input_div.append($ipt);
+
+    $parent_div.append($input_div);
+
+}
+
+
 // generate_model_configuration_ui
 // 
 // Generates the user interface using jQuery.
@@ -503,6 +540,8 @@ function generate_model_configuration_ui() {
 
     generate_mid_atlantic_ui(num_years, start_year);
     generate_georges_bank_ui(num_years, start_year);
+
+    setup_open_area_f_slider()
 
     // If any of the sub area checkboxes are clicked, all of the input boxes
     // in that column need to be either activated or deactivated.
@@ -561,12 +600,6 @@ $(document).ready(function() {
 
     $('.tabs a').on("click", tabbedPanelEffectHandler);
 
-    // Set the initial open area f slider display.  Otherwise it is blank until
-    // the slider moves.
-    var initial_slider_val = $( '#open_area_f_mortality_slider_id' ).slider( 'value' );
-    var text = initial_slider_val = (initial_slider_val / 100.0).toFixed(2);
-    $( "#open_area_f_mortality_display_id" ).val( text );
-
     // The model takes a while to run, so keep the user from hitting the submit
     // button twice.  Do this by disabling the submit button.
     $('form').submit(function(){
@@ -599,18 +632,7 @@ $(document).ready(function() {
                 </div>
 
                 <!-- Not part of tabbedPanels discussion mentioned above -->
-                <div class="centre">
-                    <h2 id="open_area_f_label_id">Open Area F</h2>
-                    <div id="open_area_f_mortality_slider_id"></div>
-                    <div>
-                        <input
-                            id="open_area_f_mortality_display_id",
-                            name="open_area_f_mortality"
-                            type="text"
-                            readonly>
-                    </div>
-                </div>
-
+                <div id="id_open_area_f_div" class="centre"> </div>
 
                 <div>
                     <input id="submit_id" type="submit" name="submit" value="Run Model">
