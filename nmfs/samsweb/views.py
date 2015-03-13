@@ -86,7 +86,7 @@ def run_model(request):
 
     # Invoke the SAMS model wrapper, which in turn runs the model.
     with tempfile.TemporaryDirectory() as tdir:
-        s = SamsWrapper(outdir=tdir, numruns=100,
+        s = SamsWrapper(outdir=tdir, numruns=params['num_model_runs'],
                         startyear=params['start_year'],
                         access_area_management=config,
                         open_area_f=params['open_area_f_mortality'])
@@ -661,6 +661,8 @@ def unpack_post_parameters(rpost):
             key2 = region_abbrev + '_' + label + '_mortality'
             data[key1] = float(rpost[key2])
 
+    # Retrieve the number of model runs.
+    data['num_model_runs'] = int(rpost['num_model_runs'])
     return data
 
 

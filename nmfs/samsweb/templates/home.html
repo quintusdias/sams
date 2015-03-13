@@ -547,8 +547,8 @@ function generate_model_configuration_ui() {
     // in that column need to be either activated or deactivated.
     $('.sub_area_checkbox').click(toggle_sub_area_text_boxes);
 
-    // Need to communicate the model starting year and number of years that
-    // the model should run.
+    // Need to communicate the model starting year, number of years, and number
+    // of times that the model should run.
     var $hidden_input =  $("<input></input>", {'type': 'hidden',
                                                'name': 'start_year',
                                                'value' : start_year});
@@ -557,6 +557,11 @@ function generate_model_configuration_ui() {
     var $hidden_input =  $("<input></input>", {'type': 'hidden',
                                                'name': 'num_years',
                                                'value' : num_years});
+    $('form').append($hidden_input);
+
+    var $hidden_input =  $("<input></input>", {'type': 'hidden',
+                                               'name': 'num_model_runs',
+                                               'value' : 100});
     $('form').append($hidden_input);
 }
 

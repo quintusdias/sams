@@ -81,6 +81,9 @@ class SamsTests(TestCase):
         data['gb_natural_mortality'] = 0.16
         data['gb_discard_mortality'] = 0.20
         data['gb_incidental_mortality'] = 0.20
+
+        data['num_model_runs'] = 10
+
         return(data)
 
     def generate_elephand_trunk_closed_extended(self):
