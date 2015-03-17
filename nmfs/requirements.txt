@@ -3,4 +3,5 @@ numpy==1.8.2
 matplotlib==1.4.3
 pandas==0.15.2
 seaborn==0.5.1
-selenium=2.45
+selenium==2.45
+gunicorn==18
