@@ -23,6 +23,10 @@ class SamsWrapper(object):
 
     Attributes
     ----------
+    config : dict
+        Items include sub area mortality (dataframes) for each
+        region, plus scalar values for natural, discard, and incident
+        mortality for each region.
     numruns : int
         Number of model runs.
     numyears : int
@@ -62,23 +66,11 @@ class SamsWrapper(object):
         self.numruns = numruns
         self.startyear = startyear
 
-        config = [access_area_management['mid_atlantic_sub_area_mortality'],
-                  access_area_management['georges_bank_sub_area_mortality']]
-        self.access_area_management = config
-
-        self.config = {}
-        self.config['mid_atlantic'] = {}
-        self.config['georges_bank'] = {}
-
-        for region in ['mid_atlantic', 'georges_bank']:
-            for label in ['natural', 'discard', 'incidental']:
-                key1 = label + '_mortality'
-                key2 = region + '_' + label + '_mortality'
-                self.config[region][key1] = access_area_management[key2]
+        self.config = access_area_management
 
         # Number of years is the number of rows in each region's access area
         # configuration.
-        self.numyears = self.access_area_management[0].shape[0]
+        self.numyears = self.config['mid_atlantic']['sub_area_mortality'].shape[0]
 
         self.open_area_f = open_area_f
 
@@ -184,7 +176,7 @@ class SamsWrapper(object):
         num_ma_subareas = len(core._mid_atlantic_config['sub_area_names'])
         
         maopareas = np.ones((nyears, num_ma_subareas))
-        ma_config = self.access_area_management[0]
+        ma_config = self.config['mid_atlantic']['sub_area_mortality']
         for col in ma_config.columns:
             col_idx = int(col) - 1
             s = ma_config[col]
@@ -192,7 +184,7 @@ class SamsWrapper(object):
 
         num_gb_subareas = len(core._georges_bank_config['sub_area_names'])
         gbopareas = np.ones((nyears, num_gb_subareas))
-        gb_config = self.access_area_management[1]
+        gb_config = self.config['georges_bank']['sub_area_mortality']
         for col in gb_config.columns:
             col_idx = int(col) - 1
             s = gb_config[col]
@@ -372,8 +364,8 @@ class SamsWrapper(object):
         # Construct the access area management section of the configuration
         # file.
         s = io.StringIO()
-        for region in self.access_area_management:
-            for year_idx, sub_areas in region.iterrows():
+        for region in self.config.keys():
+            for year_idx, sub_areas in self.config[region]['sub_area_mortality'].iterrows():
                 # Is the subregion open this year?
                 if all(list(np.isnan(area) for area in sub_areas)):
                     # Yes, the subregion is open.

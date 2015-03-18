@@ -70,19 +70,22 @@ def run_model(request):
     params = unpack_post_parameters(request.POST)
 
     config = {}
+    config['mid_atlantic'] = {}
+    config['georges_bank'] = {}
     df = pd.DataFrame(params['mid_atlantic_mortality'],
                       columns=params['mid_atlantic_active_areas'])
-    config['mid_atlantic_sub_area_mortality'] = df
+    config['mid_atlantic']['sub_area_mortality'] = df
 
     df = pd.DataFrame(params['georges_bank_mortality'],
                       columns=params['georges_bank_active_areas'])
-    config['georges_bank_sub_area_mortality'] = df
+    config['georges_bank']['sub_area_mortality'] = df
 
     # Add the natural, discard, and incident mortality for each region.
     for region in ['mid_atlantic', 'georges_bank']:
         for label in ['natural', 'discard', 'incidental']:
-            key = region + '_' + label + '_mortality'
-            config[key] = params[key]
+            key1 = label + '_mortality'
+            key2 = region + '_' + label + '_mortality'
+            config[region][key1] = params[key2]
 
     # Invoke the SAMS model wrapper, which in turn runs the model.
     with tempfile.TemporaryDirectory() as tdir:
