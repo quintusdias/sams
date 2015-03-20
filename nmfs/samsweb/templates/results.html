@@ -55,13 +55,14 @@ $(document).ready(function() {
 </script>
 </head>
 <body>
-    <!-- header -->
-    <div id="header_id">
-        <a id="new_model_run_link_id" href="/sams/">New Model Run</a>
+    <div class="container pull-left">
+        <div class="navbar navbar-default" role="navigation">
+            <a class="navbar-brand" href="/sams/">New Model Run</a>
+            <a class="navbar-brand" href="/sams/model_configuration/">Model Configuration File</a>
+        </div>
     </div>
 
-    <div>
-        <h1>Model Results</h1>
+    <div class="container pull-left">
         <div class="tabbedPanels">
             <ul class="tabs">
                 <li><a id="ma_hudson_canyon_shell_height_link_id"
@@ -239,9 +240,6 @@ $(document).ready(function() {
             </div>
     
         </div>
-    </div>
-    <div>
-        <a href="/sams/model_configuration/">Model Configuration File</a>
     </div>
 
 </body>
