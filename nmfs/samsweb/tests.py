@@ -150,7 +150,7 @@ class SamsTests(TestCase):
     def test_model_was_run(self):
         data = self.generate_default_post_params()
         response = self.client.post('/sams/run', data)
-        self.assertContains(response, 'Model Results')
+        self.assertContains(response, 'New Model Run')
 
     def test_et_closed_extended_model(self):
         """
@@ -158,7 +158,7 @@ class SamsTests(TestCase):
         """
         data = self.generate_elephand_trunk_closed_extended()
         response = self.client.post('/sams/run', data)
-        self.assertContains(response, 'Model Results')
+        self.assertContains(response, 'New Model Run')
 
     def test_gb6_model(self):
         """
@@ -166,4 +166,4 @@ class SamsTests(TestCase):
         """
         data = self.generate_gb6_post_params()
         response = self.client.post('/sams/run', data)
-        self.assertContains(response, 'Model Results')
+        self.assertContains(response, 'New Model Run')

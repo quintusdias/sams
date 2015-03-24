@@ -56,6 +56,11 @@ table.mortality > tbody > tr > td > input {
     width:  100px;
 }
 
+div.mortality_slider_class {
+	margin: 5px;
+    width:  150px;
+}
+
 div.centre {
     display: block;
     margin-left: auto;

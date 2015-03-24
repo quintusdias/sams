@@ -24,7 +24,7 @@ class NewVisitorTest(BaseTest):
         self.browser.find_element_by_css_selector('#gb_link_id').click()
 
         # There should be a label for open area f
-        self.browser.find_element_by_css_selector('h2#open_area_f_label_id')
+        self.browser.find_element_by_css_selector('h3#open_area_f_label_id')
 
         # The f-mortality display has a value.
         id = '#open_area_f_mortality_display_id'

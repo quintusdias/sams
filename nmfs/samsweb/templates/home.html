@@ -318,7 +318,8 @@ function generate_mortality_slider(abbrev, label, mortality) {
     $div.append($h3);
 
     var div_id = abbrev + '_' + label.toLowerCase().replace(' ', '_') + "_div_id";
-    var $slider_div = $("<div></div>", {'id': div_id});
+    var $slider_div = $("<div></div>", {'id': div_id,
+                                        'class':  'mortality_slider_class'});
     $div.append($slider_div)
 
     var target_id = '#' + abbrev + '_' + label.toLowerCase().replace(' ', '_') + '_id';
@@ -486,7 +487,7 @@ function generate_georges_bank_ui(num_years, start_year) {
 //
 function setup_open_area_f_slider() {
 
-    // <h2 id="open_area_f_label_id">Open Area F</h2>
+    // <h3 id="open_area_f_label_id">Open Area F</h3>
     // <div id="open_area_f_mortality_slider_id"></div>
     // <div>
     //     <input
@@ -499,12 +500,13 @@ function setup_open_area_f_slider() {
 
     var $parent_div = $('#id_open_area_f_div');
 
-    var $h2 = $("<h2></h2>", {'class': 'sams_slider_label',
+    var $h2 = $("<h3></h3>", {'class': 'sams_slider_label',
                               'id': 'open_area_f_label_id'});
     $h2.text('Open Area F');
     $parent_div.append($h2);
 
-    var $slider_div = $('<div></div>', {'id': 'open_area_f_mortality_slider_id'});
+    var $slider_div = $('<div></div>', {'id': 'open_area_f_mortality_slider_id',
+                                        'class': 'mortality_slider mortality_slider_class'});
     $parent_div.append($slider_div);
 
     var slider_target_id = 'open_area_f_mortality_display_id';
@@ -639,7 +641,7 @@ $(document).ready(function() {
                 </div>
 
                 <!-- Not part of tabbedPanels discussion mentioned above -->
-                <div id="id_open_area_f_div" class="centre"> </div>
+                <div id="id_open_area_f_div" class="mortality_slider_class"> </div>
 
                 <div>
                     <input id="submit_id" type="submit" name="submit" value="Run Model">
