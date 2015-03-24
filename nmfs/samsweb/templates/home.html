@@ -352,6 +352,7 @@ function generate_mortality_slider(abbrev, label, mortality) {
     return $li;
 }
 
+
 // generate_natural_discard_incidental_sliders
 //
 // Parameters
@@ -360,6 +361,31 @@ function generate_mortality_slider(abbrev, label, mortality) {
 //     DIV element that serves as a parent to the sliders
 // natural, discard, incidental : float
 //     TODO
+//
+// <div class="mortality_sliders" id="ma_mortality_sliders_div_id">
+//   <ul>
+//     <li>
+//       <div>
+//         <h3>Natural Mortality</h3>
+//         <div id="ma_natural_mortality_div_id"
+//              class="mortality_slider_class ui-slider
+//                     ui-slider-horizontal 
+//                     ui-widget ui-widget-content 
+//                     ui-corner-all">
+//           <span class="ui-slider-handle ui-state-default ui-corner-all" tabindex="0" style="left: 20%;">
+//           </span>
+//         </div>
+//         <input id="ma_natural_mortality_id"
+//                type="text"
+//                name="ma_natural_mortality"
+//                class="mortality_slider_display"
+//                readonly="readonly">
+//       </div>
+//     </li>
+//     <li>...</li>
+//     <li>...</li>
+//   </ul>
+// </div>
 function generate_natural_discard_incidental_sliders(parent_div_id, natural, discard, incidental) {
 
     var abbrev = "";
@@ -485,6 +511,23 @@ function generate_georges_bank_ui(num_years, start_year) {
 
 // create a slider to control the open area f value
 //
+// <div id="id_open_area_f_div" class="mortality_slider_class">
+//   <h3 class="sams_slider_label" id="open_area_f_label_id">Open Area F</h3>
+//   <div id="open_area_f_mortality_slider_id"
+//        class="mortality_slider mortality_slider_class
+//               ui-slider ui-slider-horizontal ui-widget ui-widget-content
+//               ui-corner-all">
+//     <span class="ui-slider-handle ui-state-default ui-corner-all"
+//           tabindex="0"
+//           style="left: 48%;"></span>
+//   </div>
+//   <div>
+//     <input id="open_area_f_mortality_display_id"
+//            type="text"
+//            name="open_area_f_mortality"
+//            readonly="readonly">
+//   </div>
+// </div>
 function setup_open_area_f_slider() {
 
     // <h3 id="open_area_f_label_id">Open Area F</h3>
@@ -533,6 +576,30 @@ function setup_open_area_f_slider() {
 
 }
 
+// generate_open_area_f_slider
+//
+// Parameters
+// ----------
+function generate_open_area_f_slider() {
+
+    var abbrev = "all_open_area_f";
+
+    var $sliders_div = $("<div>", {'class': 'mortality_sliders',
+                                   'id': abbrev + '_mortality_sliders_div_id'});
+
+    var $ul = $("<ul></ul>");
+
+    var label = "Open Area F2";
+    var $li = generate_mortality_slider(abbrev, label, 0.48);
+    $ul.append($li);
+
+    $sliders_div.append($ul);
+
+    var $parent_div = $('#id_open_area_f_div');
+    $parent_div.append($sliders_div);
+
+}
+
 
 // generate_model_configuration_ui
 // 
@@ -545,7 +612,8 @@ function generate_model_configuration_ui() {
     generate_mid_atlantic_ui(num_years, start_year);
     generate_georges_bank_ui(num_years, start_year);
 
-    setup_open_area_f_slider()
+    setup_open_area_f_slider();
+    // generate_open_area_f_slider();
 
     // If any of the sub area checkboxes are clicked, all of the input boxes
     // in that column need to be either activated or deactivated.
