@@ -72,7 +72,7 @@ class SamsTests(TestCase):
 
         data['start_year'] = 2014
         data['num_years'] = 15
-        data['open_area_f_mortality'] = 0.48
+        data['all_open_area_f'] = 0.48
 
         data['ma_natural_mortality'] = 0.20
         data['ma_discard_mortality'] = 0.20

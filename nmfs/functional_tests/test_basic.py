@@ -23,11 +23,8 @@ class NewVisitorTest(BaseTest):
         # region and the mid atlantic.  Sam clicks on the Georges Bank tab
         self.browser.find_element_by_css_selector('#gb_link_id').click()
 
-        # There should be a label for open area f
-        self.browser.find_element_by_css_selector('h3#open_area_f_label_id')
-
         # The f-mortality display has a value.
-        id = '#open_area_f_mortality_display_id'
+        id = '#all_open_area_f_id'
         slider_display = self.browser.find_element_by_css_selector(id)
         slider_text = slider_display.get_attribute("value")
         self.assertEqual(slider_text, '0.48')

@@ -315,14 +315,20 @@ function generate_mortality_slider(abbrev, label, mortality) {
     var $div = $("<div></div>");
 
     var $h3 = $("<h3>" + label + "</h3>");
+
+    // Lower-case the label, replace all spaces with underscores in order
+    // to make an easily usable ID.
+    var lc_label = label.toLowerCase();
+    lc_label = lc_label.replace(/\s/g, '_');
+
     $div.append($h3);
 
-    var div_id = abbrev + '_' + label.toLowerCase().replace(' ', '_') + "_div_id";
+    var div_id = abbrev + '_' + lc_label + "_div_id";
     var $slider_div = $("<div></div>", {'id': div_id,
                                         'class':  'mortality_slider_class'});
     $div.append($slider_div)
 
-    var target_id = '#' + abbrev + '_' + label.toLowerCase().replace(' ', '_') + '_id';
+    var target_id = '#' + abbrev + '_' + lc_label + '_id';
     $slider_div.slider({
         min: 0,
         max: 100,
@@ -332,8 +338,9 @@ function generate_mortality_slider(abbrev, label, mortality) {
         },
     });
 
-    var input_id = abbrev + '_' + label.toLowerCase().replace(' ', '_') + '_id';
-    var name = abbrev + '_' + label.toLowerCase().replace(' ', '_');
+    var input_id = abbrev + '_' + lc_label + '_id';
+    var name = abbrev + '_' + lc_label;
+    name = name.replace(' ', '_');
     var the_class = 'mortality_slider_display';
 
     var $ipt = $("<input></input>", {'id': input_id,
@@ -362,30 +369,6 @@ function generate_mortality_slider(abbrev, label, mortality) {
 // natural, discard, incidental : float
 //     TODO
 //
-// <div class="mortality_sliders" id="ma_mortality_sliders_div_id">
-//   <ul>
-//     <li>
-//       <div>
-//         <h3>Natural Mortality</h3>
-//         <div id="ma_natural_mortality_div_id"
-//              class="mortality_slider_class ui-slider
-//                     ui-slider-horizontal 
-//                     ui-widget ui-widget-content 
-//                     ui-corner-all">
-//           <span class="ui-slider-handle ui-state-default ui-corner-all" tabindex="0" style="left: 20%;">
-//           </span>
-//         </div>
-//         <input id="ma_natural_mortality_id"
-//                type="text"
-//                name="ma_natural_mortality"
-//                class="mortality_slider_display"
-//                readonly="readonly">
-//       </div>
-//     </li>
-//     <li>...</li>
-//     <li>...</li>
-//   </ul>
-// </div>
 function generate_natural_discard_incidental_sliders(parent_div_id, natural, discard, incidental) {
 
     var abbrev = "";
@@ -411,9 +394,6 @@ function generate_natural_discard_incidental_sliders(parent_div_id, natural, dis
     var label = "Incidental Mortality";
     var $li = generate_mortality_slider(abbrev, label, incidental);
     $ul.append($li);
-
-    // generate the discard mortality slider
-    // generate the incidental mortality slider
 
     $sliders_div.append($ul);
 
@@ -539,67 +519,16 @@ function setup_open_area_f_slider() {
     //            type="text"
     //            readonly>
     // </div>
-    var initial_slider_value = 48;
-
     var $parent_div = $('#id_open_area_f_div');
-
-    var $h2 = $("<h3></h3>", {'class': 'sams_slider_label',
-                              'id': 'open_area_f_label_id'});
-    $h2.text('Open Area F');
-    $parent_div.append($h2);
-
-    var $slider_div = $('<div></div>', {'id': 'open_area_f_mortality_slider_id',
-                                        'class': 'mortality_slider mortality_slider_class'});
-    $parent_div.append($slider_div);
-
-    var slider_target_id = 'open_area_f_mortality_display_id';
-    $slider_div.slider({
-        min: 0,
-        max: 100,
-        value: initial_slider_value,
-        change: function( event, ui ) {
-            $( '#' + slider_target_id ).val( ui.value/100.0 );
-        },
-    });
-
-    // Create the text box that will display the slider value.
-    var $input_div = $("<div></div>");
-    var $ipt = $("<input></input>", {'id': slider_target_id,
-                                     'type': 'text',
-                                     'name': 'open_area_f_mortality'})
-    var text = (initial_slider_value / 100).toFixed(2);
-    $ipt.val( text );
-    $ipt.attr('readonly', true);
-    $input_div.append($ipt);
-
-    $parent_div.append($input_div);
-
-}
-
-// generate_open_area_f_slider
-//
-// Parameters
-// ----------
-function generate_open_area_f_slider() {
-
-    var abbrev = "all_open_area_f";
-
-    var $sliders_div = $("<div>", {'class': 'mortality_sliders',
-                                   'id': abbrev + '_mortality_sliders_div_id'});
 
     var $ul = $("<ul></ul>");
-
-    var label = "Open Area F2";
-    var $li = generate_mortality_slider(abbrev, label, 0.48);
+    var label = "Open Area F";
+    var $li = generate_mortality_slider('all', label, 0.48);
     $ul.append($li);
 
-    $sliders_div.append($ul);
-
-    var $parent_div = $('#id_open_area_f_div');
-    $parent_div.append($sliders_div);
+    $parent_div.append($ul);
 
 }
-
 
 // generate_model_configuration_ui
 // 
@@ -613,7 +542,6 @@ function generate_model_configuration_ui() {
     generate_georges_bank_ui(num_years, start_year);
 
     setup_open_area_f_slider();
-    // generate_open_area_f_slider();
 
     // If any of the sub area checkboxes are clicked, all of the input boxes
     // in that column need to be either activated or deactivated.
@@ -709,7 +637,7 @@ $(document).ready(function() {
                 </div>
 
                 <!-- Not part of tabbedPanels discussion mentioned above -->
-                <div id="id_open_area_f_div" class="mortality_slider_class"> </div>
+                <div id="id_open_area_f_div" class="mortality_sliders"> </div>
 
                 <div>
                     <input id="submit_id" type="submit" name="submit" value="Run Model">

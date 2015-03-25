@@ -92,7 +92,7 @@ def run_model(request):
         s = SamsWrapper(outdir=tdir, numruns=params['num_model_runs'],
                         startyear=params['start_year'],
                         access_area_management=config,
-                        open_area_f=params['open_area_f_mortality'])
+                        open_area_f=params['all_open_area_f'])
         s.run()
 
     create_web_outputs(params, s)
@@ -638,7 +638,7 @@ def unpack_post_parameters(rpost):
     data['start_year'] = int(rpost['start_year'])
     data['num_years'] = int(rpost['num_years'])
 
-    data['open_area_f_mortality'] = float(rpost['open_area_f_mortality'])
+    data['all_open_area_f'] = float(rpost['all_open_area_f'])
 
     # Retrieve the mortality matrix, restrict it to the sub areas that the
     # user marked as active.

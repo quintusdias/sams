@@ -78,3 +78,11 @@ div.centre {
 	margin: 10px;
 }
 
+div#id_open_area_f_div {
+    clear: both;
+}
+
+input#submit_id {
+    clear: both;
+}
+
